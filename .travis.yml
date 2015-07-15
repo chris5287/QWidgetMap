@@ -1,0 +1,34 @@
+# Force an OSX build to utilise modern C++ compiler.
+language: objective-c
+
+# Run the install scripts...
+install:
+
+    # Ensure brew is updated.
+    - brew update
+
+    # Install Qt5 using brew.
+    - brew install qt5
+
+    # Configure GDAL 1.11.0 support.
+    - ln -s /usr/local/Cellar/gdal/1.11.0/include /usr/local/Cellar/gdal/1.11.0/include/gdal
+    - export QWM_GDAL_INC=/usr/local/Cellar/gdal/1.11.0/include/gdal
+    - export QWM_GDAL_LIB=/usr/local/Cellar/gdal/1.11.0/lib
+
+    # Record the compiler version.
+    - clang++ -v
+
+    # Find the qmake command and record the version.
+    - qmake_command=$(find /usr/local/Cellar/qt5 -name qmake -print | head -n 1)
+    - $qmake_command -v
+
+# Run the build scripts...
+script:
+
+    # Create the 'shadow build' folder.
+    - mkdir build
+    - cd build
+
+    # Build the library with GDAL extensions, the example application and the Qt Designer plugins.
+    - $qmake_command CONFIG+=with-gdal CONFIG+=with-example CONFIG+=with-plugins ../src
+    - make
