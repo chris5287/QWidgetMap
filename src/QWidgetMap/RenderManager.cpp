@@ -37,9 +37,7 @@ RenderManager::RenderManager(const std::shared_ptr<ViewportManager>& viewport_ma
     qRegisterMetaType<util::RectWorldCoord>("util::RectWorldCoord");
 
     // Connect signal/slots to process changes that require a redraw request.
-    QObject::connect(m_layer_manager.get(), &LayerManager::layerAdded, this, &RenderManager::requestRedraw);
     QObject::connect(m_layer_manager.get(), &LayerManager::layerChanged, this, &RenderManager::requestRedraw);
-    QObject::connect(m_layer_manager.get(), &LayerManager::layerRemoved, this, &RenderManager::requestRedraw);
     QObject::connect(&(util::ImageManager::get()), &util::ImageManager::imageUpdated, this, &RenderManager::requestRedraw);
 
     // Start the render thread.

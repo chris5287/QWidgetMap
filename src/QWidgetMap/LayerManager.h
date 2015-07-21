@@ -78,15 +78,17 @@ namespace qwm
          * If multiple layers are added, they are painted in the added order (the last added wil be the top layer).
          * @param layer The layer which should be added.
          * @param index The index position the layer should added (-1 means the layer is added to the top).
+         * @param disable_redraw Whether to disable the redraw call after the layer has been added (allows bulk adding without redrawing each time).
          * @note 'index 0' is the base layer, 'index 1 layer' will be painted on top of 'index 0 layer', and so on...
          */
-        void add(const std::shared_ptr<Layer>& layer, const int& index = -1);
+        void add(const std::shared_ptr<Layer>& layer, const int& index = -1, const bool& disable_redraw = false);
 
         /**
          * Removes a layer.
          * @param name The name of the layer which should be removed.
+         * @param disable_redraw Whether to disable the redraw call after the layer has been removed (allows bulk removal without redrawing each time).
          */
-        void remove(const std::string& name);
+        void remove(const std::string& name, const bool& disable_redraw = false);
 
     signals:
 

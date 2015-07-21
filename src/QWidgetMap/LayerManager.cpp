@@ -55,7 +55,7 @@ std::shared_ptr<Layer> LayerManager::layer(const std::string& name) const
     return return_layer;
 }
 
-void LayerManager::add(const std::shared_ptr<Layer>& layer, const int& index)
+void LayerManager::add(const std::shared_ptr<Layer>& layer, const int& index, const bool& disable_redraw)
 {
     // Check we have a valid layer.
     if(layer != nullptr)
@@ -87,12 +87,19 @@ void LayerManager::add(const std::shared_ptr<Layer>& layer, const int& index)
             }
         }
 
+        // Should we redraw?
+        if(disable_redraw == false)
+        {
+            // Emit that the layer has changed.
+            emit layerChanged();
+        }
+
         // Emit that the layer has been added.
         emit layerAdded(layer);
     }
 }
 
-void LayerManager::remove(const std::string& name)
+void LayerManager::remove(const std::string& name, const bool& disable_redraw)
 {
     // Fetch the layer by name.
     const auto layer_to_remove(layer(name));
@@ -115,6 +122,13 @@ void LayerManager::remove(const std::string& name)
                 // Remove the layer.
                 m_layers.erase(itr_find);
             }
+        }
+
+        // Should we redraw?
+        if(disable_redraw == false)
+        {
+            // Emit that the layer has changed.
+            emit layerChanged();
         }
 
         // Emit that the layer has been removed.
