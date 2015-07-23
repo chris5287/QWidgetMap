@@ -163,6 +163,7 @@ QPixmap QWidgetMap::primaryScreen() const
 
     // Construct a QPixmap of the current viewport size.
     QPixmap return_pixmap(current_viewport.sizePx().toSize());
+    return_pixmap.fill(Qt::transparent);
 
     // Construct a QPainter for the QPixmap.
     QPainter painter(&return_pixmap);
