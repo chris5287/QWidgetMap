@@ -18,7 +18,12 @@
 #pragma once
 
 // Qt includes.
+#include <QtCore/QtGlobal>
+#if (QT_VERSION < QT_VERSION_CHECK(5, 5, 0))
 #include <QtDesigner/QDesignerCustomWidgetInterface>
+#else
+#include <QtUiPlugin/QDesignerCustomWidgetInterface>
+#endif
 
 class PluginQProgressIndicator : public QObject, public QDesignerCustomWidgetInterface
 {
