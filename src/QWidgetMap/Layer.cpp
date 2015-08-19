@@ -199,10 +199,7 @@ bool Layer::addDrawable(const std::shared_ptr<draw::Drawable>& drawable, const b
                 QWriteLocker locker(&m_drawable_geometries_mutex);
 
                 // Add the geometry point container.
-                m_drawable_geometries_points.insert(std::static_pointer_cast<draw::geometry::GeometryPoint>(drawable_geometry)->coord(), drawable_geometry);
-
-                // Update our success.
-                success = true;
+                success = m_drawable_geometries_points.insert(std::static_pointer_cast<draw::geometry::GeometryPoint>(drawable_geometry)->coord(), drawable_geometry);
             }
             else
             {
