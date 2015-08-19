@@ -17,6 +17,9 @@
 
 #pragma once
 
+// Qt includes.
+#include <QtCore/QDebug>
+
 // STD includes.
 #include <cstddef>
 #include <memory>
@@ -158,8 +161,8 @@ namespace qwm
                         }
                         else
                         {
-                            // We cannot insert, fail!
-                            throw std::runtime_error("Unable to insert into quadtree container.");
+                            // Warn that we are unable to insert point into quadtree container.
+                            qDebug() << "Unable to insert point into quadtree container.";
                         }
                     }
                 }
