@@ -75,18 +75,20 @@ bool GeometryLineString::touches(const Geometry& geometry, const Viewport& viewp
         // Check we have at least 2 points!
         if(m_points.size() > 1)
         {
-            // Calculate fuzz factor around line.
+            // Calculate the degree distance of 1 px within viewport (used to calculate fuzz factor around lines).
             const util::PointWorldPx point_center_px(projection::toPointWorldPx(viewport, util::PointWorldCoord(0.0, 0.0)));
-            const util::PointWorldPx point_fuzz_px(point_center_px.x() + geometry.pen().widthF(), point_center_px.y() + geometry.pen().widthF());
-            const util::PointWorldCoord point_fizz_coord(projection::toPointWorldCoord(viewport, point_fuzz_px));
+            const util::PointWorldPx point_fuzz_px(point_center_px.x() + 1.0, point_center_px.y() + 1.0);
+            const util::PointWorldCoord point_fuzz_coord(projection::toPointWorldCoord(viewport, point_fuzz_px));
 
             // Whilst we have not found any touches and we have a part-line to check.
             for(std::size_t p_i = 0; return_touches == false && p_i < m_points.size() - 1; ++p_i)
             {
-                // Construct a line to perform intersect checks against, with the appropriate line width.
+                // Construct a line to perform intersect checks against.
                 QGraphicsLineItem line(QLineF(m_points.at(p_i), m_points.at(p_i + 1)));
+
+                // Set pen width to fuzz factor required.
                 QPen line_pen(line.pen());
-                line_pen.setWidthF(point_fizz_coord.x());
+                line_pen.setWidthF(point_fuzz_coord.x() * pen().widthF());
                 line.setPen(line_pen);
 
                 // Switch to the correct geometry type.
@@ -94,8 +96,16 @@ bool GeometryLineString::touches(const Geometry& geometry, const Viewport& viewp
                 {
                     case GeometryType::GeometryEllipse:
                     {
+                        // Create an ellipse item to represent our GeometryEllipse.
+                        QGraphicsEllipseItem ellipse_item(geometry.boundingBox(viewport));
+
+                        // Set pen width to 0.0 (QPen defaults to 1 pixel).
+                        QPen ellipse_item_pen(ellipse_item.pen());
+                        ellipse_item_pen.setWidthF(0.0);
+                        ellipse_item.setPen(ellipse_item_pen);
+
                         // They have touched if the shapes intersect.
-                        return_touches = line.shape().intersects(QGraphicsEllipseItem(geometry.boundingBox(viewport)).shape());
+                        return_touches = line.shape().intersects(ellipse_item.shape());
 
                         // Finished.
                         break;
@@ -106,8 +116,16 @@ bool GeometryLineString::touches(const Geometry& geometry, const Viewport& viewp
                         const auto& geometry_points(static_cast<const GeometryLineString&>(geometry).points());
                         for(std::size_t gp_i = 0; return_touches == false && gp_i < geometry_points.size() - 1; ++gp_i)
                         {
+                            // Create a line item to represent our GeomtryLineString.
+                            QGraphicsLineItem line_item(QLineF(geometry_points.at(gp_i), geometry_points.at(gp_i + 1)));
+
+                            // Set pen width to fuzz factor required.
+                            QPen line_item_pen(line_item.pen());
+                            line_item_pen.setWidthF(point_fuzz_coord.x() * geometry.pen().widthF());
+                            line_item.setPen(line_item_pen);
+
                             // They have touched if the shapes intersect.
-                            return_touches = line.shape().intersects(QGraphicsLineItem(QLineF(geometry_points.at(gp_i), geometry_points.at(gp_i + 1))).shape());
+                            return_touches = line.shape().intersects(line_item.shape());
                         }
 
                         // Finished.
@@ -123,8 +141,16 @@ bool GeometryLineString::touches(const Geometry& geometry, const Viewport& viewp
                     }
                     case GeometryType::GeometryPolygon:
                     {
+                        // Create a polygon item to represent our GeomtryPolygon.
+                        QGraphicsPolygonItem polygon_item(static_cast<const GeometryPolygon&>(geometry).toQPolygonF());
+
+                        // Set pen width to 0.0 (QPen defaults to 1 pixel).
+                        QPen polygon_item_pen(polygon_item.pen());
+                        polygon_item_pen.setWidthF(0.0);
+                        polygon_item.setPen(polygon_item_pen);
+
                         // They have touched if the shapes intersect.
-                        return_touches = line.shape().intersects(QGraphicsPolygonItem(static_cast<const GeometryPolygon&>(geometry).toQPolygonF()).shape());
+                        return_touches = line.shape().intersects(polygon_item.shape());
 
                         // Finished.
                         break;

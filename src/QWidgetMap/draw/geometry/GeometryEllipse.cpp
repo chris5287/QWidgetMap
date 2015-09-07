@@ -80,15 +80,28 @@ bool GeometryEllipse::touches(const Geometry& geometry, const Viewport& viewport
         /// @todo create QGraphicsEllipseItem with rotation and semi-major/minor.
 
         // Construct an ellipse to perform intersect checks against.
-        const QGraphicsEllipseItem ellipse(boundingBox(viewport));
+        QGraphicsEllipseItem ellipse(boundingBox(viewport));
+
+        // Set pen width to 0.0 (QPen defaults to 1 pixel).
+        QPen ellipse_pen(ellipse.pen());
+        ellipse_pen.setWidthF(0.0);
+        ellipse.setPen(ellipse_pen);
 
         // Switch to the correct geometry type.
         switch(geometry.geometryType())
         {
             case GeometryType::GeometryEllipse:
             {
+                // Create an ellipse item to represent our GeometryEllipse.
+                QGraphicsEllipseItem ellipse_item(geometry.boundingBox(viewport));
+
+                // Set pen width to 0.0 (QPen defaults to 1 pixel).
+                QPen ellipse_item_pen(ellipse_item.pen());
+                ellipse_item_pen.setWidthF(0.0);
+                ellipse_item.setPen(ellipse_item_pen);
+
                 // They have touched if the shapes intersect.
-                return_touches = ellipse.shape().intersects(QGraphicsEllipseItem(geometry.boundingBox(viewport)).shape());
+                return_touches = ellipse.shape().intersects(ellipse_item.shape());
 
                 // Finished.
                 break;
@@ -111,8 +124,16 @@ bool GeometryEllipse::touches(const Geometry& geometry, const Viewport& viewport
             }
             case GeometryType::GeometryPolygon:
             {
+                // Create a polygon item to represent our GeomtryPolygon.
+                QGraphicsPolygonItem polygon_item(static_cast<const GeometryPolygon&>(geometry).toQPolygonF());
+
+                // Set pen width to 0.0 (QPen defaults to 1 pixel).
+                QPen polygon_item_pen(polygon_item.pen());
+                polygon_item_pen.setWidthF(0.0);
+                polygon_item.setPen(polygon_item_pen);
+
                 // They have touched if the shapes intersect.
-                return_touches = ellipse.shape().intersects(QGraphicsPolygonItem(static_cast<const GeometryPolygon&>(geometry).toQPolygonF()).shape());
+                return_touches = ellipse.shape().intersects(polygon_item.shape());
 
                 // Finished.
                 break;
