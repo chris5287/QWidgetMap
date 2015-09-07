@@ -75,18 +75,20 @@ bool GeometryLineString::touches(const Geometry& geometry, const Viewport& viewp
         // Check we have at least 2 points!
         if(m_points.size() > 1)
         {
-            // Calculate fuzz factor around line.
+            // Calculate the degree distance of 1 px within viewport (used to calculate fuzz factor around lines).
             const util::PointWorldPx point_center_px(projection::toPointWorldPx(viewport, util::PointWorldCoord(0.0, 0.0)));
-            const util::PointWorldPx point_fuzz_px(point_center_px.x() + geometry.pen().widthF(), point_center_px.y() + geometry.pen().widthF());
-            const util::PointWorldCoord point_fizz_coord(projection::toPointWorldCoord(viewport, point_fuzz_px));
+            const util::PointWorldPx point_fuzz_px(point_center_px.x() + 1.0, point_center_px.y() + 1.0);
+            const util::PointWorldCoord point_fuzz_coord(projection::toPointWorldCoord(viewport, point_fuzz_px));
 
             // Whilst we have not found any touches and we have a part-line to check.
             for(std::size_t p_i = 0; return_touches == false && p_i < m_points.size() - 1; ++p_i)
             {
-                // Construct a line to perform intersect checks against, with the appropriate line width.
+                // Construct a line to perform intersect checks against.
                 QGraphicsLineItem line(QLineF(m_points.at(p_i), m_points.at(p_i + 1)));
+
+                // Set pen width to fuzz factor required.
                 QPen line_pen(line.pen());
-                line_pen.setWidthF(point_fizz_coord.x());
+                line_pen.setWidthF(point_fuzz_coord.x() * pen().widthF());
                 line.setPen(line_pen);
 
                 // Switch to the correct geometry type.
