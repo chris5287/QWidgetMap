@@ -149,7 +149,7 @@ void InertiaEventManager::timerEvent(QTimerEvent* event)
         m_viewport_manager->scroll(m_kinetic_speed);
 
         // If the speed is 0.0, 0.0 (ie: not moving).
-        if(m_kinetic_speed == QPointF(0.0, 0.0))
+        if(m_kinetic_speed == PointPx(0.0, 0.0))
         {
             // Alter the kinetic state to Steady.
             m_kinetic_state = KineticState::Steady;
