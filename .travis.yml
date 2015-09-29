@@ -5,10 +5,10 @@ language: objective-c
 install:
 
     # Ensure brew is updated.
-    - brew update
+    - brew update >/dev/null
 
     # Install Qt5 using brew.
-    - brew install qt5
+    - brew install qt5 >/dev/null
 
     # Configure GDAL 1.11.0 support.
     - ln -s /usr/local/Cellar/gdal/1.11.0/include /usr/local/Cellar/gdal/1.11.0/include/gdal

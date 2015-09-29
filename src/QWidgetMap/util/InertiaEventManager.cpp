@@ -134,7 +134,7 @@ void InertiaEventManager::timerEvent(QTimerEvent* event)
         m_kinetic_speed = m_mouse_position_dragged_px - current_mouse_position_px;
 
         // Reset the number of steps to use when calculating deceleration.
-        m_kinetic_deceleration_steps = 30;
+        m_kinetic_deceleration_steps = 20;
 
         // Update the mouse dragged position.
         m_mouse_position_dragged_px = current_mouse_position_px;
@@ -149,7 +149,7 @@ void InertiaEventManager::timerEvent(QTimerEvent* event)
         m_viewport_manager->scroll(m_kinetic_speed);
 
         // If the speed is 0.0, 0.0 (ie: not moving).
-        if(m_kinetic_speed == QPointF(0.0, 0.0))
+        if(m_kinetic_speed == PointPx(0.0, 0.0))
         {
             // Alter the kinetic state to Steady.
             m_kinetic_state = KineticState::Steady;
@@ -162,20 +162,29 @@ void InertiaEventManager::timerEvent(QTimerEvent* event)
 
 void InertiaEventManager::decelerateSpeed()
 {
-    // Maximum speed allowed in pixels.
-    const double max_speed_px = 100.0;
+    // Check we have a valid deceleration step to process.
+    if(m_kinetic_deceleration_steps > 0)
+    {
+        // Maximum speed allowed in pixels.
+        const double max_speed_px = 100.0;
 
-    // Use qBounds to restrict the speed to the maximum kinetic speed allowed.
-    const double x_speed(qBound(-max_speed_px, m_kinetic_speed.x(), max_speed_px));
-    const double y_speed(qBound(-max_speed_px, m_kinetic_speed.y(), max_speed_px));
+        // Use qBounds to restrict the speed to the maximum kinetic speed allowed.
+        const double x_speed(qBound(-max_speed_px, m_kinetic_speed.x(), max_speed_px));
+        const double y_speed(qBound(-max_speed_px, m_kinetic_speed.y(), max_speed_px));
 
-    // Calculate the current step distance required for the current deceleration steps remaining.
-    const double x_step_distance(x_speed / m_kinetic_deceleration_steps);
-    const double y_step_distance(y_speed / m_kinetic_deceleration_steps);
+        // Calculate the current step distance required for the current deceleration steps remaining.
+        const double x_step_distance(x_speed / m_kinetic_deceleration_steps);
+        const double y_step_distance(y_speed / m_kinetic_deceleration_steps);
 
-    // Calculate the new kinetic speed.
-    m_kinetic_speed = PointPx(x_speed - x_step_distance, y_speed - y_step_distance);
+        // Calculate the new kinetic speed.
+        m_kinetic_speed = PointPx(x_speed - x_step_distance, y_speed - y_step_distance);
 
-    // Reduce the deceleration steps required for the next calculation.
-    m_kinetic_deceleration_steps--;
+        // Reduce the deceleration steps required for the next calculation.
+        m_kinetic_deceleration_steps--;
+    }
+    else
+    {
+        // Set kinectic speed to not moving instead.
+        m_kinetic_speed = PointPx(0.0, 0.0);
+    }
 }
