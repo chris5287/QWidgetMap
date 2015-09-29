@@ -134,7 +134,7 @@ void InertiaEventManager::timerEvent(QTimerEvent* event)
         m_kinetic_speed = m_mouse_position_dragged_px - current_mouse_position_px;
 
         // Reset the number of steps to use when calculating deceleration.
-        m_kinetic_deceleration_steps = 30;
+        m_kinetic_deceleration_steps = 20;
 
         // Update the mouse dragged position.
         m_mouse_position_dragged_px = current_mouse_position_px;
