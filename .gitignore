@@ -40,3 +40,5 @@ ui_*.h
 
 # Doxygen
 html/*
+
+build/*
