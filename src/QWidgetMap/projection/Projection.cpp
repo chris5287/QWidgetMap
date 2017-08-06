@@ -22,6 +22,8 @@
 #include "ProjectionSphericalMercator.h"
 #include "../Viewport.h"
 
+#include <stdexcept>
+
 using namespace qwm;
 
 namespace

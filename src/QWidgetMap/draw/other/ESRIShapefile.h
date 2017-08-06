@@ -32,7 +32,7 @@
 #include "../Drawable.h"
 
 // Forward-declare gdal-specific resources.
-class OGRDataSource;
+class GDALDataset;
 class OGRFeature;
 
 /// QWidgetMap namespace.
@@ -158,7 +158,7 @@ namespace qwm
             private:
 
                 /// The OGR data set of the ESRI Shapefile.
-                OGRDataSource* m_ogr_data_set { nullptr };
+                GDALDataset* m_ogr_data_set { nullptr };
 
                 /// The OGR layer names.
                 std::vector<std::string> m_ogr_layer_names;

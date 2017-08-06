@@ -69,7 +69,7 @@ ESRIShapefile::ESRIShapefile(const std::string& file_path, const std::vector<std
     if(QFile(file_path.c_str()).exists())
     {
         // Open the file.
-        m_ogr_data_set = OGRSFDriverRegistrar::Open(file_path.c_str(), FALSE);
+        m_ogr_data_set = (GDALDataset*) GDALOpenEx(file_path.c_str(), GDAL_OF_VECTOR, NULL, NULL, NULL);
     }
     else
     {
@@ -90,7 +90,7 @@ ESRIShapefile::~ESRIShapefile()
     if(m_ogr_data_set != nullptr)
     {
         // Close the data set.
-        OGRDataSource::DestroyDataSource(m_ogr_data_set);
+        GDALClose(m_ogr_data_set);
     }
 }
 
